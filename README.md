@@ -6,7 +6,8 @@ A relational database project built with **MySQL** to manage all aspects of comp
 
 ## 📌 Project Overview
 
-This project was developed as a **Database Management Systems (DBMS)** course project. It models a fully functional esports tournament platform covering players, teams, games, tournaments, matches, and results.
+This project was developed as a **Database Management Systems (DBMS)** course project.  
+It models a fully functional esports tournament platform covering players, teams, games, tournaments, matches, and results.
 
 The database is designed to reflect real-world esports operations — supporting multiple games, international teams from across Asia, bracket-style tournaments, and detailed match statistics.
 
