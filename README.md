@@ -1,6 +1,6 @@
 # 🎮 Esports Tournament Management System
 
-A relational database project built with **MySQL** to manage all aspects of competitive esports 
+A relational database project built with **MySQL** to manage all aspects of competitive esports  
 tournaments — from player registrations and team rosters to match scheduling, results tracking and prize standings.
 
 ---
