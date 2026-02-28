@@ -43,13 +43,13 @@ The system contains **6 tables**:
 
 ## 🔑 Key Features
 
-- **PascalCase column naming** — `PlayerID`, `GameName`, `WinnerTeamID`, `DurationMins`
+- **PascalCase column naming** – `PlayerID`, `GameName`, `WinnerTeamID`, `DurationMins`
 - **Referential integrity** enforced via `FOREIGN KEY` constraints with `ON DELETE CASCADE` / `ON DELETE SET NULL`
 - **ENUM types** for structured fields (`Format`, `Status`)
 - **`CHECK` constraint** to prevent a team from playing against itself
 - **`UPDATE` statements** used to set `CaptainID` after both Teams and Players are inserted
-- **Role & TeamID in Players** — eliminates the need for a separate junction table
-- **WinnerTeamID in Matches & Tournaments** — standings tracked without a separate standings table
+- **Role & TeamID in Players** – eliminates the need for a separate junction table
+- **WinnerTeamID in Matches & Tournaments** – standings tracked without a separate standings table
 
 ---
 
