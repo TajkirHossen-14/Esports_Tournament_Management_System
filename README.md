@@ -1,7 +1,7 @@
 # 🎮 Esports Tournament Management System
 
 A relational database project built with **MySQL** to manage all aspects of competitive esports  
-tournaments — from player rosters and team management to match scheduling, results tracking, and prize distribution.
+tournaments - from player rosters and team management to match scheduling, results tracking, and prize distribution.
 
 ---
 
@@ -10,7 +10,7 @@ tournaments — from player rosters and team management to match scheduling, res
 This project was developed as a **Database Management Systems (DBMS)** course project.  
 It models a fully functional esports tournament platform covering players, teams, games, tournaments, matches, and results.
 
-The database is designed to reflect real-world esports operations — supporting multiple games, international teams from across Asia, bracket-style tournaments, and detailed match statistics.
+The database is designed to reflect real-world esports operations - supporting multiple games, international teams from across Asia, bracket-style tournaments, and detailed match statistics.
 
 ---
 
@@ -27,7 +27,6 @@ The system contains **6 tables**:
 | `Matches` | Match records with stage, Best-of format, and winner/loser references |
 | `Results` | Match outcomes — scores, duration, MVP, and prize awarded per team |
 
-> **Note:** Player–team relationships and tournament standings are embedded directly into the `Players`, `Teams`, `Tournaments`, and `Results` tables via extra columns, keeping the schema lean at 6 tables without losing any key information.
 
 ---
 
