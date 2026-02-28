@@ -1,7 +1,7 @@
 # 🎮 Esports Tournament Management System
 
 A relational database project built with **MySQL** to manage all aspects of competitive esports  
-tournaments — from player registrations and team rosters to match scheduling, results tracking and prize standings.
+tournaments — from player rosters and team management to match scheduling, results tracking, and prize distribution.
 
 ---
 
@@ -16,19 +16,18 @@ The database is designed to reflect real-world esports operations — supporting
 
 ## 🗂️ Database Schema
 
-The system contains **9 tables**:
+The system contains **6 tables**:
 
 | Table | Description |
 |---|---|
 | `Games` | Stores all supported esports titles (Valorant, CS2, Dota 2, etc.) |
-| `Players` | Individual player profiles with rank points and country info |
-| `Teams` | Team registrations with captain reference |
-| `Team_Members` | Player–team relationship with roles (IGL, Sniper, Support, etc.) |
-| `Tournaments` | Tournament details including format, prize pool, and status |
-| `Tournament_Registrations` | Tracks which teams are registered for which tournament |
-| `Matches` | Individual match records with stage and Best-of format |
-| `Results` | Match outcomes — scores, duration, winner, and MVP |
-| `Tournament_Standings` | Final positions and prize money awarded per tournament |
+| `Players` | Player profiles with rank points, country, team assignment, and in-game role |
+| `Teams` | Team info with captain reference, total wins, and cumulative prize earned |
+| `Tournaments` | Tournament details including format, prize pool, status, and winner team |
+| `Matches` | Match records with stage, Best-of format, and winner/loser references |
+| `Results` | Match outcomes — scores, duration, MVP, and prize awarded per team |
+
+> **Note:** Player–team relationships and tournament standings are embedded directly into the `Players`, `Teams`, `Tournaments`, and `Results` tables via extra columns, keeping the schema lean at 6 tables without losing any key information.
 
 ---
 
@@ -40,7 +39,6 @@ The system contains **9 tables**:
 - **20** tournaments with various formats: Single/Double Elimination, Round Robin, Swiss
 - **40** matches with full bracket stages (Quarter Final → Semi Final → Final)
 - **37** completed match results with MVP records
-- **40** tournament standings with prize distribution
 
 ---
 
@@ -48,9 +46,11 @@ The system contains **9 tables**:
 
 - **PascalCase column naming** — `PlayerID`, `GameName`, `WinnerTeamID`, `DurationMins`
 - **Referential integrity** enforced via `FOREIGN KEY` constraints with `ON DELETE CASCADE` / `ON DELETE SET NULL`
-- **ENUM types** for structured fields (`Format`, `Status`, `BestOf`)
-- **Composite primary keys** in associative tables (`Team_Members`, `Tournament_Registrations`)
+- **ENUM types** for structured fields (`Format`, `Status`)
 - **`CHECK` constraint** to prevent a team from playing against itself
+- **`UPDATE` statements** used to set `CaptainID` after both Teams and Players are inserted
+- **Role & TeamID in Players** — eliminates the need for a separate junction table
+- **WinnerTeamID in Matches & Tournaments** — standings tracked without a separate standings table
 
 ---
 
@@ -59,7 +59,7 @@ The system contains **9 tables**:
 | Category | Keywords Used |
 |---|---|
 | DDL | `CREATE TABLE`, `PRIMARY KEY`, `FOREIGN KEY`, `UNIQUE`, `CHECK`, `AUTO_INCREMENT`, `DEFAULT`, `ENUM` |
-| DML | `INSERT INTO` |
+| DML | `INSERT INTO`, `UPDATE` |
 | Filtering | `WHERE`, `IN`, `AND`, `NOT IN` |
 | Aggregation | `GROUP BY`, `HAVING`, `COUNT`, `SUM`, `AVG`, `MAX`, `MIN`, `ROUND` |
 | Sorting & Limiting | `ORDER BY ASC/DESC`, `LIMIT`, `LIMIT ... OFFSET` |
@@ -74,8 +74,8 @@ The system contains **9 tables**:
 esports-tournament-db/
 │
 ├── esports_tournament_management.sql   # Main SQL file
-│   ├── DDL  — CREATE TABLE statements
-│   ├── DML  — INSERT sample data (30+ rows per table)
+│   ├── DDL  — CREATE TABLE statements (6 tables)
+│   ├── DML  — INSERT + UPDATE sample data (20–30 rows per table)
 │   └── DQL  — 24 SELECT queries
 │
 └── README.md
@@ -94,14 +94,17 @@ mysql -u root -p < esports_tournament_management.sql
 # Option 2 — MySQL Workbench
 # File → Open SQL Script → esports_tournament_management.sql → Execute (⚡)
 
-# Option 3 — phpMyAdmin
+# Option 3 — Cursor IDE (Terminal)
+# Open terminal with Ctrl+` then run Option 1 above
+
+# Option 4 — phpMyAdmin
 # Import → Choose file → Go
 ```
 
 The script will automatically:
 1. Create the `esports_db` database
-2. Create all 9 tables with constraints
-3. Insert all sample data
+2. Create all 6 tables with constraints
+3. Insert all sample data and set captain references
 4. Run all 24 demonstration queries
 
 ---
@@ -111,18 +114,18 @@ The script will automatically:
 | # | Query | Clauses Highlighted |
 |---|---|---|
 | Q1 | All players with team and role | `LEFT JOIN`, `COALESCE`, `ORDER BY` |
-| Q2 | Total prize money per team | `JOIN`, `GROUP BY`, `SUM`, `COUNT` |
-| Q3 | Win/Loss rate per team | `CASE WHEN`, `ROUND`, `GROUP BY` |
+| Q2 | Total prize money and wins per team | `ORDER BY` |
+| Q3 | Win/Loss rate per team | `JOIN`, `WHERE`, `CASE WHEN`, `ROUND`, `GROUP BY` |
 | Q4 | Top 10 players by rank | `LEFT JOIN`, `ORDER BY`, `LIMIT` |
-| Q5 | Tournament summary | `JOIN`, `LEFT JOIN`, `GROUP BY`, `COUNT` |
+| Q5 | Tournament summary with winner | `JOIN`, `LEFT JOIN`, `COALESCE`, `ORDER BY` |
 | Q6 | MVP leaderboard | `JOIN`, `GROUP BY`, `COUNT`, `ORDER BY` |
-| Q7 | Full bracket for a tournament | Multi-`JOIN`, `WHERE` |
+| Q7 | Full bracket for a tournament | Multi-`JOIN`, `WHERE`, `ORDER BY` |
 | Q8 | Players with no MVP award | `WHERE NOT IN`, Subquery |
 | Q9 | Avg match duration per tournament | 3-table `JOIN`, `AVG`, `MAX`, `GROUP BY` |
-| Q10 | Tournament-winning teams | `WHERE`, `COUNT`, `SUM`, `GROUP BY` |
+| Q10 | Tournament-winning teams | `WHERE`, `ORDER BY` |
 | Q11 | Player count per country | `GROUP BY`, `AVG`, `MAX`, `MIN` |
 | Q12 | Complete bracket view | 5× `JOIN`, 3× `LEFT JOIN`, `CONCAT` |
-| Q13 | SE Asia players above 1200 pts | `WHERE`, `IN`, `AND` |
+| Q13 | SE/East Asian players above 1200 pts | `WHERE`, `IN`, `AND` |
 | Q14 | Final matches over 100 mins | `WHERE` multi-condition, `JOIN` |
 | Q15 | Upcoming high-prize tournaments | `WHERE`, `JOIN` |
 | Q16 | Matches grouped by stage | `GROUP BY`, `COUNT`, `AVG` |
@@ -131,7 +134,6 @@ The script will automatically:
 | Q19 | Top 5 prize pool tournaments | `ORDER BY`, `LIMIT` |
 | Q20 | Player list with pagination | `LIMIT`, `OFFSET` |
 | Q21 | Countries with 2+ players | `GROUP BY`, `HAVING` |
-| Q22 | Teams with 2+ tournaments & 100k+ prize | `HAVING` multi-condition |
-| Q23 | Games hosting 1+ tournaments with 500k+ prize | `HAVING`, `SUM` |
-| Q24 | Top 3 Asian players (all clauses combined) | `WHERE` + `GROUP BY` + `HAVING` + `ORDER BY` + `LIMIT` |
-
+| Q22 | Teams with 1+ wins and prize > 100k | `GROUP BY`, `HAVING` multi-condition |
+| Q23 | Games with 2+ tournaments and prize > 500k | `HAVING`, `SUM` |
+| Q24 | Top 3 Asian players — all clauses combined | `WHERE` + `GROUP BY` + `HAVING` + `ORDER BY` + `LIMIT` |
