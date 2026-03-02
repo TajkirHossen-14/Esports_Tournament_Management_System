@@ -35,7 +35,7 @@ The system contains **6 tables**:
 - **20** unique games across genres (Tactical Shooter, MOBA, Battle Royale, Fighting, Sports, RTS)
 - **30** players from **10 Asian countries** – Bangladesh, India, Pakistan, Nepal, Sri Lanka, Malaysia, Indonesia, Philippines, Thailand, South Korea
 - **20** teams representing diverse Asian nations
-- **20** tournaments with various formats : Single/Double Elimination, Round Robin, Swiss
+- **20** tournaments with various formats : Single / Double Elimination, Round Robin, Swiss
 - **40** matches with full bracket stages (Quarter Final → Semi Final → Final)
 - **37** completed match results with MVP records
 
